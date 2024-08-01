@@ -11,5 +11,8 @@
     "spreadsheets"
   ],
   "author": "PlatinumAzure",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.15.3"
+  }
 }
