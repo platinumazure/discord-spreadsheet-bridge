@@ -1,0 +1,15 @@
+{
+  "name": "discord-spreadsheet-bridge",
+  "version": "0.1.0",
+  "description": "Package for connecting Discord and spreadsheet providers in order to automate Discord user management",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "spreadsheets"
+  ],
+  "author": "PlatinumAzure",
+  "license": "MIT"
+}
