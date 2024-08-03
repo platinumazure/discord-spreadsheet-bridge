@@ -2,6 +2,7 @@
   "name": "discord-spreadsheet-bridge",
   "version": "0.1.0",
   "description": "Package for connecting Discord and spreadsheet providers in order to automate Discord user management",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
