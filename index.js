@@ -1,6 +1,9 @@
 import express from "express"
 import { GoogleSheetsProvider } from "./lib/providers/googleSheets/googleSheetsProvider.js";
 
+// Has side effects (TODO: Move this logic to an app initialization script later)
+import { SQLiteProvider } from "./lib/database/sqlite3.js";
+
 const app = express();
 const port = 3000;
 
