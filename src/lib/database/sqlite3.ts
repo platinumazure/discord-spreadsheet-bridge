@@ -11,7 +11,8 @@ const __filename = fileURLToPath(import.meta.url);
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.resolve(path.dirname(__filename), '../../../local_db.sqlite')
+  storage: path.resolve(path.dirname(__filename), '../../../local_db.sqlite'),
+  logging: false
 });
 
 const DiscordServer = sequelize.define('DiscordServer', {
