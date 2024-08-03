@@ -16,26 +16,34 @@ export class GoogleSheetsProvider implements SpreadsheetProvider {
     private discordHandleColumn: number = DISCORD_HANDLE_COLUMN,
   ) {}
 
-  async isDiscordHandlePresent(discordHandle: string): Promise<boolean> {
+  async isDiscordHandlePresent(
+    discordHandle: string,
+  ): Promise<boolean> {
     // Authenticate to Google API with apiKey
     const sheets = google.sheets({ version: 'v4', auth: API_KEY });
 
     return new Promise((resolve, reject) => {
-      sheets.spreadsheets.values.get({
-        spreadsheetId: this.spreadsheetId,
-        range: this.fullSheetRange,
-      })
-      .then((res) => {
-        const rows = res.data.values;
-        if (rows?.length) {
-          resolve(rows.some((row) => row[this.discordHandleColumn] === discordHandle));
-        } else {
-          resolve(false);
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
+      sheets.spreadsheets.values
+        .get({
+          spreadsheetId: this.spreadsheetId,
+          range: this.fullSheetRange,
+        })
+        .then((res) => {
+          const rows = res.data.values;
+          if (rows?.length) {
+            resolve(
+              rows.some(
+                (row) =>
+                  row[this.discordHandleColumn] === discordHandle,
+              ),
+            );
+          } else {
+            resolve(false);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
     });
   }
-};
+}
