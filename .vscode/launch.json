@@ -12,6 +12,7 @@
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],
+      "envFile": "${workspaceFolder}/local.env",
       "serverReadyAction": {
         "pattern": "listening on port 3000",
         "uriFormat": "http://localhost:3000",
