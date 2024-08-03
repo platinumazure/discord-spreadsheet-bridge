@@ -5,12 +5,12 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/index.js",
+      "program": "${workspaceFolder}/dist/index.js",
       "runtimeArgs": [
         "--inspect=9229"
       ],
       "outFiles": [
-        "${workspaceFolder}/**/*.js"
+        "${workspaceFolder}/dist/**/*.js"
       ],
       "serverReadyAction": {
         "pattern": "listening on port 3000",
