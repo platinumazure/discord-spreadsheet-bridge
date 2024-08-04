@@ -5,7 +5,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/dist/index.js",
+      "program": "${workspaceFolder}/dist/server.js",
       "runtimeArgs": ["--inspect=9229"],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "envFile": "${workspaceFolder}/local.env",
