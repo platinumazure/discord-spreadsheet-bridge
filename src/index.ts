@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 
 import { GoogleSheetsProvider } from './lib/providers/googleSheets/googleSheetsProvider.js';
@@ -9,67 +9,118 @@ app.use(bodyParser.json());
 
 const port = 3000;
 
-app.get('/', (req, res) => {
+// Define interfaces for request and response bodies
+interface CreateServerRequest {
+  discordServerId: string;
+  discordServerName: string;
+}
+
+interface UpdateServerRequest {
+  discordServerName: string;
+}
+
+interface CreateSpreadsheetCheckConfigRequest {
+  configName: string;
+  spreadsheetId: string;
+  sheetName: string;
+  fullSheetRange: string;
+  discordHandleColumn: string;
+}
+
+// Define interfaces for response bodies if needed
+interface ServerResponse {
+  id: string;
+  name: string;
+}
+
+interface SpreadsheetCheckConfigResponse {
+  configName: string;
+  isDiscordHandlePresent: boolean;
+}
+
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello, world!');
 });
 
 /*** Discord Server APIs ***/
 
 // Get Discord server information by Discord server ID
-app.get('/servers/:discordServerId', async (req, res) => {
-  const discordServerId = req.params.discordServerId;
+app.get(
+  '/servers/:discordServerId',
+  async (req: Request, res: Response) => {
+    const discordServerId = req.params.discordServerId;
 
-  const sqliteProvider = new SQLiteProvider();
-  const server = await sqliteProvider.getDiscordServer(discordServerId);
+    const sqliteProvider = new SQLiteProvider();
+    const server =
+      await sqliteProvider.getDiscordServer(discordServerId);
 
-  res.send(server);
-});
+    res.send(server);
+  },
+);
 
 // Create Discord server information
-app.post('/servers', async (req, res) => {
-  const discordServerId = req.body.discordServerId;
-  const discordServerName = req.body.discordServerName;
+app.post(
+  '/servers',
+  async (
+    req: Request<ServerResponse, CreateServerRequest>,
+    res: Response,
+  ) => {
+    const { discordServerId, discordServerName } = req.body;
 
-  const sqliteProvider = new SQLiteProvider();
-  const createdServer = await sqliteProvider.insertDiscordServer(
-    discordServerId,
-    discordServerName,
-  );
+    const sqliteProvider = new SQLiteProvider();
+    const createdServer = await sqliteProvider.insertDiscordServer(
+      discordServerId,
+      discordServerName,
+    );
 
-  res.send(createdServer);
-});
+    res.send(createdServer);
+  },
+);
 
 // Update Discord server information
-app.put('/servers/:discordServerId', async (req, res) => {
-  const discordServerId = req.params.discordServerId;
-  const discordServerName = req.body.discordServerName;
+app.put(
+  '/servers/:discordServerId',
+  async (
+    req: Request<
+      { discordServerId: string },
+      ServerResponse,
+      UpdateServerRequest
+    >,
+    res: Response,
+  ) => {
+    const discordServerId = req.params.discordServerId;
+    const { discordServerName } = req.body;
 
-  const sqliteProvider = new SQLiteProvider();
-  const updated = await sqliteProvider.updateDiscordServer(
-    discordServerId,
-    discordServerName,
-  );
+    const sqliteProvider = new SQLiteProvider();
+    const updated = await sqliteProvider.updateDiscordServer(
+      discordServerId,
+      discordServerName,
+    );
 
-  res.send(updated);
-});
+    res.send(updated);
+  },
+);
 
 // Delete Discord server information
-app.delete('/servers/:discordServerId', async (req, res) => {
-  const discordServerId = req.params.discordServerId;
+app.delete(
+  '/servers/:discordServerId',
+  async (req: Request, res: Response) => {
+    const discordServerId = req.params.discordServerId;
 
-  const sqliteProvider = new SQLiteProvider();
-  const deleted =
-    await sqliteProvider.deleteDiscordServer(discordServerId);
+    const sqliteProvider = new SQLiteProvider();
+    const deleted =
+      await sqliteProvider.deleteDiscordServer(discordServerId);
 
-  res.send(deleted);
-});
+    res.send(deleted);
+  },
+);
 
 /*** Spreadsheet Check Config APIs ***/
 
 // Get all spreadsheet check configurations by Discord server ID
 app.get(
   '/servers/:discordServerId/spreadsheet-check-configs',
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const discordServerId = req.params.discordServerId;
 
     const sqliteProvider = new SQLiteProvider();
@@ -83,13 +134,22 @@ app.get(
 // Create a spreadsheet check configuration
 app.post(
   '/servers/:discordServerId/spreadsheet-check-configs',
-  async (req, res) => {
+  async (
+    req: Request<
+      { discordServerId: string },
+      SpreadsheetCheckConfigResponse,
+      CreateSpreadsheetCheckConfigRequest
+    >,
+    res: Response,
+  ) => {
     const discordServerId = req.params.discordServerId;
-    const configName = req.body.configName;
-    const spreadsheetId = req.body.spreadsheetId;
-    const sheetName = req.body.sheetName;
-    const fullSheetRange = req.body.fullSheetRange;
-    const discordHandleColumn = req.body.discordHandleColumn;
+    const {
+      configName,
+      spreadsheetId,
+      sheetName,
+      fullSheetRange,
+      discordHandleColumn,
+    } = req.body;
 
     const sqliteProvider = new SQLiteProvider();
     const createdConfig =
@@ -110,7 +170,10 @@ app.post(
 
 app.get(
   '/servers/:discordServerId/check/:discordHandle',
-  async (req, res) => {
+  async (
+    req: Request,
+    res: Response<SpreadsheetCheckConfigResponse[]>,
+  ) => {
     const discordServerId = req.params.discordServerId;
     const discordHandle = req.params.discordHandle;
 
@@ -136,7 +199,7 @@ app.get(
           isDiscordHandlePresent,
         };
       }),
-    ).then((results) => {
+    ).then((results: SpreadsheetCheckConfigResponse[]) => {
       res.send(results);
     });
   },
