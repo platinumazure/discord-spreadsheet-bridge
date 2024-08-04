@@ -23,6 +23,7 @@ app.get('/servers/:discordServerId', async (req, res) => {
   res.send(server);
 });
 
+// Create Discord server information
 app.post('/servers', async (req, res) => {
   const discordServerId = req.body.discordServerId;
   const discordServerName = req.body.discordServerName;
@@ -34,6 +35,31 @@ app.post('/servers', async (req, res) => {
   );
 
   res.send(createdServer);
+});
+
+// Update Discord server information
+app.put('/servers/:discordServerId', async (req, res) => {
+  const discordServerId = req.params.discordServerId;
+  const discordServerName = req.body.discordServerName;
+
+  const sqliteProvider = new SQLiteProvider();
+  const updated = await sqliteProvider.updateDiscordServer(
+    discordServerId,
+    discordServerName,
+  );
+
+  res.send(updated);
+});
+
+// Delete Discord server information
+app.delete('/servers/:discordServerId', async (req, res) => {
+  const discordServerId = req.params.discordServerId;
+
+  const sqliteProvider = new SQLiteProvider();
+  const deleted =
+    await sqliteProvider.deleteDiscordServer(discordServerId);
+
+  res.send(deleted);
 });
 
 app.get('/check/google-sheets/:discordHandle', async (req, res) => {
