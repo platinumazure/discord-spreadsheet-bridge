@@ -88,14 +88,22 @@ app.post(
 
 app.get(
   '/check/google-sheets/:discordHandle',
-  async (req: Request, res: Response) => {
+  async (
+    req: Request,
+    res: Response<SpreadsheetCheckConfigResponse>,
+  ) => {
     const discordHandle = req.params.discordHandle;
 
     const googleSheetsProvider = new GoogleSheetsProvider();
     const isPresent =
       await googleSheetsProvider.isDiscordHandlePresent(discordHandle);
 
-    res.send('Discord handle is present: ' + isPresent);
+    const response: SpreadsheetCheckConfigResponse = {
+      configName: 'Google Sheets',
+      isDiscordHandlePresent: isPresent,
+    };
+
+    res.send(response);
   },
 );
 
