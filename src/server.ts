@@ -12,7 +12,7 @@ const port = args.port || 3000; // Default to 3000 if not provided
 const app = express();
 app.use(bodyParser.json());
 
-// Define interfaces for request and response bodies
+// Define interfaces for request bodies
 interface CreateServerRequest {
   discordServerId: string;
   discordServerName: string;
@@ -30,7 +30,7 @@ interface CreateSpreadsheetCheckConfigRequest {
   discordHandleColumn: string;
 }
 
-// Define interfaces for response bodies if needed
+// Define interfaces for response bodies
 interface ServerResponse {
   id: string;
   name: string;
@@ -48,30 +48,43 @@ app.get('/', (req: Request, res: Response) => {
 // Get Discord server information by Discord server ID
 app.get(
   '/servers/:discordServerId',
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response<ServerResponse>) => {
     const discordServerId = req.params.discordServerId;
 
     const sqliteProvider = new SQLiteProvider();
     const server =
       await sqliteProvider.getDiscordServer(discordServerId);
 
-    res.send(server);
+    const response: ServerResponse = {
+      id: server.serverId,
+      name: server.serverName,
+    };
+
+    res.send(response);
   },
 );
 
-app.post('/servers', async (req: Request, res: Response) => {
-  console.log('Request body:', req.body); // Check if this logs the correct body
-  const discordServerId = req.body.discordServerId;
-  const discordServerName = req.body.discordServerName;
+app.post(
+  '/servers',
+  async (req: Request, res: Response<ServerResponse>) => {
+    console.log('Request body:', req.body); // Check if this logs the correct body
+    const discordServerId = req.body.discordServerId;
+    const discordServerName = req.body.discordServerName;
 
-  const sqliteProvider = new SQLiteProvider();
-  const createdServer = await sqliteProvider.insertDiscordServer(
-    discordServerId,
-    discordServerName,
-  );
+    const sqliteProvider = new SQLiteProvider();
+    const createdServer = await sqliteProvider.insertDiscordServer(
+      discordServerId,
+      discordServerName,
+    );
 
-  res.send(createdServer);
-});
+    const createdServerResponse: ServerResponse = {
+      id: createdServer.serverId,
+      name: createdServer.serverName,
+    };
+
+    res.send(createdServerResponse);
+  },
+);
 
 app.get(
   '/check/google-sheets/:discordHandle',
